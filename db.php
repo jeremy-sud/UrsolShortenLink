@@ -1,8 +1,8 @@
 <?php
-$host = 'localhost';
-$user = 'nuevo_usuario';
-$pass = 'nueva_contraseña';
-$db   = 'api_db';
+$host = getenv('MYSQL_HOST') ?: 'db';
+$user = getenv('MYSQL_USER') ?: 'root';
+$pass = getenv('MYSQL_PASSWORD') ?: 'root';
+$db = getenv('MYSQL_DATABASE') ?: 'api_db';
 
 $conn = new mysqli($host, $user, $pass, $db);
 

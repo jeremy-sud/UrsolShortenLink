@@ -59,8 +59,7 @@
     <nav class="w-full p-6 flex items-center justify-between max-w-7xl mx-auto z-10">
         <a href="https://ursol.com/" target="_blank" rel="noopener noreferrer"
             class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <img src="/_node_backup/client/public/iconoUrsol.webp" alt="Sistemas Ursol Logo"
-                class="h-10 w-auto object-contain">
+            <img src="assets/iconoUrsol.webp" alt="Sistemas Ursol Logo" class="h-10 w-auto object-contain">
             <span class="text-xl font-semibold tracking-tight text-white">Sistemas Ursol</span>
         </a>
     </nav>
@@ -149,7 +148,7 @@
                 <span>Developed by</span>
                 <a href="https://sites.google.com/view/repdevursol/home" target="_blank" rel="noopener noreferrer"
                     class="group flex items-center gap-2 hover:opacity-100 opacity-70 transition-all">
-                    <img src="/_node_backup/client/public/repdev-logo.png" alt="RepDev Logo"
+                    <img src="assets/repdev-logo.png" alt="RepDev Logo"
                         class="h-6 w-auto object-contain grayscale group-hover:grayscale-0 transition-all">
                     <span class="group-hover:text-white transition-colors">RepDev</span>
                 </a>

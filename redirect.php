@@ -12,21 +12,29 @@ if ($code) {
     if ($row = $result->fetch_assoc()) {
         $originalUrl = $row['original_url'];
 
+        // Security: Validate protocol before redirecting
+        $parsedUrl = parse_url($originalUrl);
+        if (!isset($parsedUrl['scheme']) || !in_array(strtolower($parsedUrl['scheme']), ['http', 'https'])) {
+            // Invalid protocol, redirect to home with error
+            header("Location: /?error=invalid_url");
+            exit;
+        }
+
         // Increment clicks
         $updateStmt = $conn->prepare("UPDATE url_shorter_db SET clicks = clicks + 1 WHERE short_code = ?");
         $updateStmt->bind_param("s", $code);
         $updateStmt->execute();
         $updateStmt->close();
 
+        $stmt->close();
         header("Location: " . $originalUrl);
         exit;
     } else {
+        $stmt->close();
         // Redirect to home with error parameter
         header("Location: /?error=not_found");
         exit;
     }
-
-    $stmt->close();
 } else {
     echo "No code provided";
 }

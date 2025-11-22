@@ -22,13 +22,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Generate Short Code (Simple random string)
-    $shortCode = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
+    // Security: Ensure protocol is http or https
+    $parsedUrl = parse_url($originalUrl);
+    if (!isset($parsedUrl['scheme']) || !in_array(strtolower($parsedUrl['scheme']), ['http', 'https'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Only HTTP and HTTPS URLs are allowed']);
+        exit;
+    }
 
-    $stmt = $conn->prepare("INSERT INTO url_shorter_db (original_url, short_code) VALUES (?, ?)");
-    $stmt->bind_param("ss", $originalUrl, $shortCode);
+    // Generate Short Code (Simple random string) with retry logic
+    $maxRetries = 5;
+    $retryCount = 0;
+    $success = false;
+    $shortCode = '';
 
-    if ($stmt->execute()) {
+    while ($retryCount < $maxRetries && !$success) {
+        $shortCode = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
+
+        $stmt = $conn->prepare("INSERT INTO url_shorter_db (original_url, short_code) VALUES (?, ?)");
+        $stmt->bind_param("ss", $originalUrl, $shortCode);
+
+        try {
+            if ($stmt->execute()) {
+                $success = true;
+            }
+        } catch (mysqli_sql_exception $e) {
+            // Check for duplicate entry error code (1062)
+            if ($e->getCode() == 1062) {
+                $retryCount++;
+                continue;
+            } else {
+                throw $e;
+            }
+        }
+        $stmt->close();
+    }
+
+    if ($success) {
         // Determine protocol and host
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $host = $_SERVER['HTTP_HOST'];
@@ -44,10 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
     } else {
         http_response_code(500);
-        echo json_encode(['error' => 'Database error']);
+        echo json_encode(['error' => 'Failed to generate unique code. Please try again.']);
     }
-
-    $stmt->close();
 } else {
     http_response_code(405); // Method Not Allowed
 }
