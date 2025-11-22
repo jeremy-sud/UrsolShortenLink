@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/23686102/README.md)
 # Acortador de URLs - Sistemas Ursol S.A.
 
 **Versión Oficial 1.0**

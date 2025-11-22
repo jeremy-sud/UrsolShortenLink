@@ -166,6 +166,15 @@
         const shortUrlInput = document.getElementById('shortUrlInput');
         const copyBtn = document.getElementById('copyBtn');
 
+        // Check for error parameter in URL (e.g. from redirect.php)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('error') === 'not_found') {
+            errorMsg.textContent = 'The requested short URL was not found.';
+            errorMsg.classList.remove('hidden');
+            // Remove param from URL without refresh
+            window.history.replaceState({}, document.title, "/");
+        }
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 

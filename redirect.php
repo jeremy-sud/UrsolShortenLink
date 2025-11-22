@@ -21,7 +21,9 @@ if ($code) {
         header("Location: " . $originalUrl);
         exit;
     } else {
-        echo "URL not found";
+        // Redirect to home with error parameter
+        header("Location: /?error=not_found");
+        exit;
     }
 
     $stmt->close();

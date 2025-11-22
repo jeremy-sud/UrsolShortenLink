@@ -16,6 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if (!filter_var($originalUrl, FILTER_VALIDATE_URL)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid URL format']);
+        exit;
+    }
+
     // Generate Short Code (Simple random string)
     $shortCode = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6);
 
